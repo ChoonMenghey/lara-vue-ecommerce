@@ -11,7 +11,7 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (!$request->user() || $request->user()->role !== 'admin') {
-            return redirect('/login')->with('error', 'You do not have access to the admin area.');
+            return redirect('/admin/login')->with('error', 'You do not have access to the admin area.');
         }
 
         return $next($request);
