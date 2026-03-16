@@ -20,7 +20,7 @@ interface Product {
     id: number;
     name: string;
     price: number;
-    image: File | null;
+    image: string | null;
     type: string;
     status: string;
 }
