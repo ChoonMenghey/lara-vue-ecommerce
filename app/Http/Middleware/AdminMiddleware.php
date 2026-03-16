@@ -11,7 +11,7 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (!$request->user()) {
-            return redirect('/admin/login')->with('error', 'Please log in to continue.');
+            return redirect()->route('admin.login')->with('error', 'Please log in to continue.');
         }
 
         if ($request->user()->role !== 'admin') {

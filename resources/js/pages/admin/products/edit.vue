@@ -12,7 +12,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/AdminLayout.vue';
-import products, { edit } from '@/routes/admin/products';
+import { edit } from '@/routes/admin/products';
 
 
 interface Product {
