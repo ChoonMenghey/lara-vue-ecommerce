@@ -15,6 +15,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes/admin';
+import { index } from '@/routes/admin/products';
 import type { NavItem } from '@/types';
 
 
@@ -26,7 +27,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Product',
-        href: dashboard(),
+        href: index(),
         icon: ScanBarcode,
     },
     {
