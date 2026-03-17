@@ -3,18 +3,31 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\User\CartController;
+use App\Http\Controllers\User\OrderController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
 
 // User Route
-Route::inertia('/', 'Welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    Route::get('/', [UserController::class, 'index'])->name('home');
+    Route::get('/products', [UserController::class, 'productView'])->name('products');
 });
 
+
+// Add to cart route
+Route:: prefix('cart')->controller(CartController::class)->group(function() {
+    Route::get('/view', 'view')->name('cart.view');
+    Route::post('store/{product}','store')->name('cart.store');
+    Route::patch('update/{cartItem}','update')->name('cart.update');
+    Route::delete('delete/{cartItem}','delete')->name('cart.delete');
+});
+
+// Payment route
+Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+Route::post('/order', [OrderController::class, 'store'])->name('order.store');
+Route::get('/order/history', [OrderController::class, 'history'])->name('order.history');
 
 // Admin Route
 Route::prefix('admin')->name('admin.')->group(function () {

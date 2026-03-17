@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
+import { toast } from 'vue-sonner';
 import Button from '@/components/ui/button/Button.vue';
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -40,20 +40,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const page = usePage();
 const flash = computed(() => page.props.flash as { success?: string | null });
-const showFlash = ref(false);
 
 watch(
     () => flash.value.success,
     (newVal) => {
         if (newVal) {
-            showFlash.value = true;
-            setTimeout(() => {
-                showFlash.value = false;
-            }, 3000);
+            toast.success(newVal, {
+                duration: 3000,
+            });
         }
     },
     { immediate: true },
 );
+
 
 const handleDelete = (id: number) => {
     if (confirm('Do you want to delete this product?')){
@@ -68,10 +67,6 @@ const handleDelete = (id: number) => {
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-            <div v-if="showFlash && flash.success"
-                class="mb-4 rounded-lg border border-green-400 bg-green-100 px-4 py-3 text-green-700">
-                {{ flash.success }}
-            </div>
             <div class="flex items-center justify-between">
                 <h1 class="text-2xl font-bold">Products</h1>
                 <Link :href="create()">
