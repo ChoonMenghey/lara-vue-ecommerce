@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\CartItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -45,6 +47,14 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'success' => fn() => $request->session()->get('success')
             ],
+            'canLogin' => app('router')->has('login'),
+            'canRegister' => app('router')->has('register'),
+            'cartCount' => function () {
+                if (Auth::check()) {
+                    return CartItem::where('user_id', Auth::id())->sum('quantity');
+                }
+                return 0;
+            },
         ];
     }
 }

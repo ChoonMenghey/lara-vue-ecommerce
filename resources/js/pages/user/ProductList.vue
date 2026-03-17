@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { router, usePage } from '@inertiajs/vue3';
-import { computed, watch } from 'vue';
-import { toast, Toaster } from 'vue-sonner';
+import { computed, watch, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import UserLayout from '@/layouts/UserLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 
@@ -17,16 +17,30 @@ interface Product {
 interface Props {
     products: Product[];
     cartCount?: number;
+    filters?: {
+        type: string;
+        sort: string;
+        search: string;
+    };
 }
 
 withDefaults(defineProps<Props>(), {
     cartCount: 0,
+    filters: () => ({
+        type: '',
+        sort: 'name_asc',
+        search: '',
+    }),
 });
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'User Dashboard',
         href: '',
+    },
+    {
+        title: 'Products',
+        href: '/products',
     },
 ];
 
@@ -49,6 +63,53 @@ watch(
     { immediate: true },
 );
 
+const selectedType = ref(page.props.filters?.type || 'all');
+const selectedSort = ref(page.props.filters?.sort || 'name_asc');
+const searchQuery = ref(page.props.filters?.search || '');
+
+const productTypes = [
+    { value: 'all', label: 'All Types' },
+    { value: 'laptop', label: 'Laptop' },
+    { value: 'phone', label: 'Phone' },
+    { value: 'watch', label: 'Watch' },
+];
+
+const sortOptions = [
+    { value: 'name_asc', label: 'Name: A-Z' },
+    { value: 'name_desc', label: 'Name: Z-A' },
+    { value: 'price_asc', label: 'Price: Low to High' },
+    { value: 'price_desc', label: 'Price: High to Low' },
+];
+
+const applyFilters = () => {
+    router.get(
+        '/products',
+        {
+            type: selectedType.value,
+            sort: selectedSort.value,
+            search: searchQuery.value,
+        },
+        {
+            preserveState: true,
+            replace: true,
+        },
+    );
+};
+
+const clearFilters = () => {
+    selectedType.value = 'all';
+    selectedSort.value = 'name_asc';
+    searchQuery.value = '';
+    router.get(
+        '/products',
+        {},
+        {
+            preserveState: true,
+            replace: true,
+        },
+    );
+};
+
 const addToCart = (productId: number) => {
     router.post(
         `/cart/store/${productId}`,
@@ -68,10 +129,9 @@ const formatPrice = (price: number) => {
 
 const getTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-        electronics: 'bg-blue-100 text-blue-800',
-        clothing: 'bg-purple-100 text-purple-800',
-        furniture: 'bg-orange-100 text-orange-800',
-        accessories: 'bg-pink-100 text-pink-800',
+        laptop: 'bg-blue-100 text-blue-800',
+        phone: 'bg-green-100 text-green-800',
+        watch: 'bg-purple-100 text-purple-800',
         default: 'bg-gray-100 text-gray-800',
     };
 
@@ -85,16 +145,92 @@ const getTypeColor = (type: string) => {
             class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
         >
             <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-                <div class="mb-8 flex items-center justify-between">
-                    <div>
-                        <h2
-                            class="text-3xl font-bold tracking-tight text-gray-900"
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold tracking-tight text-gray-900">
+                        Products
+                    </h2>
+                    <p class="mt-2 text-gray-600">
+                        Browse our complete collection
+                    </p>
+                </div>
+
+                <div
+                    class="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+                >
+                    <div
+                        class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
+                    >
+                        <div
+                            class="flex flex-col gap-4 sm:flex-row sm:items-center"
                         >
-                            Our Products
-                        </h2>
-                        <p class="mt-2 text-gray-600">
-                            Browse our latest collection
-                        </p>
+                            <div class="w-full sm:w-48">
+                                <label
+                                    class="mb-1 block text-sm font-medium text-gray-700"
+                                    >Search</label
+                                >
+                                <input
+                                    v-model="searchQuery"
+                                    type="text"
+                                    placeholder="Search products..."
+                                    class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+                                    @keyup.enter="applyFilters"
+                                />
+                            </div>
+                            <div class="w-full sm:w-40">
+                                <label
+                                    class="mb-1 block text-sm font-medium text-gray-700"
+                                    >Type</label
+                                >
+                                <select
+                                    v-model="selectedType"
+                                    placeholder="Type"
+                                    class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+                                >
+                                    <option
+                                        v-for="type in productTypes"
+                                        :key="type.value"
+                                        :value="type.value"
+                                    >
+                                        {{ type.label }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="w-full sm:w-44">
+                                <label
+                                    class="mb-1 block text-sm font-medium text-gray-700"
+                                    >Sort By</label
+                                >
+                                <select
+                                    v-model="selectedSort"
+                                    class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+                                >
+                                    <option default value="all">
+                                        All Types
+                                    </option>
+                                    <option
+                                        v-for="option in sortOptions"
+                                        :key="option.value"
+                                        :value="option.value"
+                                    >
+                                        {{ option.label }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                @click="applyFilters"
+                                class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
+                            >
+                                Apply Filters
+                            </button>
+                            <button
+                                @click="clearFilters"
+                                class="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-300"
+                            >
+                                Clear
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -113,16 +249,20 @@ const getTypeColor = (type: string) => {
                         />
                     </svg>
                     <h3 class="mt-4 text-lg font-medium text-gray-900">
-                        No products available
+                        No products found
                     </h3>
                     <p class="mt-2 text-gray-500">
-                        Check back later for new products.
+                        Try adjusting your filters or search criteria.
                     </p>
                 </div>
 
+                <div v-else class="mb-4 text-sm text-gray-600">
+                    Showing {{ products.length }} product(s)
+                </div>
+
                 <div
-                    v-else
-                    class="grid grid-cols-1 gap-6 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4"
+                    v-if="products.length > 0"
+                    class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                 >
                     <div
                         v-for="product in products"
@@ -183,7 +323,9 @@ const getTypeColor = (type: string) => {
                             </div>
                             <h3
                                 class="text-lg font-semibold text-gray-900 transition-colors group-hover:text-indigo-600"
-                            ></h3>
+                            >
+                                {{ product.name }}
+                            </h3>
                             <p class="mt-2 text-xl font-bold text-indigo-600">
                                 {{ formatPrice(product.price) }}
                             </p>
