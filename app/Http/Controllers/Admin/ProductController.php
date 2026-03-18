@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use InertiaToast\Facades\Toast;
 
 class ProductController extends Controller
 {
@@ -37,7 +38,9 @@ class ProductController extends Controller
 
         Product::create($data);
 
-        return redirect()->route('admin.products.index')->with('success', 'Product added successfuly!');
+        Toast::success('Product added successfuly!');
+
+        return redirect()->route('admin.products.index');
     }
 
     public function edit(Product $product)
@@ -69,13 +72,15 @@ class ProductController extends Controller
 
         $product->update($data);
 
-        return redirect()->route('admin.products.index')->with('success', 'Product updated successfully!');
+        Toast::success('Product updated successfully!');
+        return redirect()->route('admin.products.index');
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
 
-        return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully!');
+        Toast::success('Product deleted successfully!');
+        return redirect()->route('admin.products.index');
     }
 }

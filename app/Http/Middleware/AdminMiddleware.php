@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use InertiaToast\Facades\Toast;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
@@ -11,7 +12,8 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (!$request->user()) {
-            return redirect()->route('admin.login')->with('error', 'Please log in to continue.');
+            Toast::error("Please log in to continue.");
+            return redirect()->route('admin.login');
         }
 
         if ($request->user()->role !== 'admin') {

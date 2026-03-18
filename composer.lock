@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a477893abb564e6eda24e3b82be390de",
+    "content-hash": "7847b86c8a3e77aa46eed769dc3c5eeb",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -6392,6 +6392,70 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.4.0"
             },
             "time": "2025-12-02T11:56:42+00:00"
+        },
+        {
+            "name": "veekthoven/laravel-inertia-toast",
+            "version": "v0.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/veekthoven/laravel-inertia-toast.git",
+                "reference": "5813d7ba5158bf18425de43a2af8c099fa3a9187"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/veekthoven/laravel-inertia-toast/zipball/5813d7ba5158bf18425de43a2af8c099fa3a9187",
+                "reference": "5813d7ba5158bf18425de43a2af8c099fa3a9187",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^10.0|^11.0|^12.0",
+                "inertiajs/inertia-laravel": "^2.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0|^9.0|^10.0",
+                "phpunit/phpunit": "^10.0|^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Toast": "InertiaToast\\Facades\\Toast"
+                    },
+                    "providers": [
+                        "InertiaToast\\InertiaToastServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "InertiaToast\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Victor Abbah Nkoms"
+                }
+            ],
+            "description": "Beautiful toast notifications for Laravel + Inertia.js applications. Fluent PHP API, multi-toast support, redirect-safe, with Vue 3 and React adapters.",
+            "keywords": [
+                "inertia",
+                "laravel",
+                "notifications",
+                "toast"
+            ],
+            "support": {
+                "issues": "https://github.com/veekthoven/laravel-inertia-toast/issues",
+                "source": "https://github.com/veekthoven/laravel-inertia-toast/tree/v0.3.1"
+            },
+            "time": "2026-03-04T11:31:54+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

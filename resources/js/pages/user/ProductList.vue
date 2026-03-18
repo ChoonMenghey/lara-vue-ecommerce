@@ -4,6 +4,25 @@ import { computed, watch, ref } from 'vue';
 import { toast } from 'vue-sonner';
 import UserLayout from '@/layouts/UserLayout.vue';
 import type { BreadcrumbItem } from '@/types';
+import { home } from '@/routes';
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import Badge from '@/components/ui/badge/Badge.vue';
+import Button from '@/components/ui/button/Button.vue';
+import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Search, X, ShoppingCart, Package, Filter } from 'lucide-vue-next';
 
 interface Product {
     id: number;
@@ -36,7 +55,7 @@ withDefaults(defineProps<Props>(), {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'User Dashboard',
-        href: '',
+        href: home(),
     },
     {
         title: 'Products',
@@ -126,17 +145,6 @@ const formatPrice = (price: number) => {
         currency: 'MYR',
     }).format(price);
 };
-
-const getTypeColor = (type: string) => {
-    const colors: Record<string, string> = {
-        laptop: 'bg-blue-100 text-blue-800',
-        phone: 'bg-green-100 text-green-800',
-        watch: 'bg-purple-100 text-purple-800',
-        default: 'bg-gray-100 text-gray-800',
-    };
-
-    return colors[type.toLowerCase()] || colors.default;
-};
 </script>
 
 <template>
@@ -146,117 +154,122 @@ const getTypeColor = (type: string) => {
         >
             <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
                 <div class="mb-8">
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-900">
+                    <h2
+                        class="text-3xl font-bold tracking-tight text-foreground"
+                    >
                         Products
                     </h2>
-                    <p class="mt-2 text-gray-600">
+                    <p class="mt-2 text-muted-foreground">
                         Browse our complete collection
                     </p>
                 </div>
 
-                <div
-                    class="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
-                >
-                    <div
-                        class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
-                    >
+                <Card class="mb-6">
+                    <CardHeader class="pb-4">
+                        <div class="flex items-center gap-2">
+                            <Filter class="h-5 w-5 text-muted-foreground" />
+                            <CardTitle class="text-lg">Filters</CardTitle>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
                         <div
-                            class="flex flex-col gap-4 sm:flex-row sm:items-center"
+                            class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
                         >
-                            <div class="w-full sm:w-48">
-                                <label
-                                    class="mb-1 block text-sm font-medium text-gray-700"
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium"
                                     >Search</label
                                 >
-                                <input
-                                    v-model="searchQuery"
-                                    type="text"
-                                    placeholder="Search products..."
-                                    class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
-                                    @keyup.enter="applyFilters"
-                                />
+                                <div class="relative">
+                                    <Search
+                                        class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                                    />
+                                    <Input
+                                        v-model="searchQuery"
+                                        type="text"
+                                        placeholder="Search products..."
+                                        class="pl-9"
+                                        @keyup.enter="applyFilters"
+                                    />
+                                </div>
                             </div>
-                            <div class="w-full sm:w-40">
-                                <label
-                                    class="mb-1 block text-sm font-medium text-gray-700"
-                                    >Type</label
-                                >
-                                <select
-                                    v-model="selectedType"
-                                    placeholder="Type"
-                                    class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
-                                >
-                                    <option
-                                        v-for="type in productTypes"
-                                        :key="type.value"
-                                        :value="type.value"
-                                    >
-                                        {{ type.label }}
-                                    </option>
-                                </select>
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium">Type</label>
+                                <Select v-model="selectedType">
+                                    <SelectTrigger>
+                                        <SelectValue
+                                            placeholder="Select type"
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem
+                                            v-for="type in productTypes"
+                                            :key="type.value"
+                                            :value="type.value"
+                                        >
+                                            {{ type.label }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
-                            <div class="w-full sm:w-44">
-                                <label
-                                    class="mb-1 block text-sm font-medium text-gray-700"
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium"
                                     >Sort By</label
                                 >
-                                <select
-                                    v-model="selectedSort"
-                                    class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+                                <Select v-model="selectedSort">
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Sort by" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem
+                                            v-for="option in sortOptions"
+                                            :key="option.value"
+                                            :value="option.value"
+                                        >
+                                            {{ option.label }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div class="flex items-end gap-2">
+                                <Button
+                                    @click="applyFilters"
+                                    class="flex-1 gap-2"
                                 >
-                                    <option default value="all">
-                                        All Types
-                                    </option>
-                                    <option
-                                        v-for="option in sortOptions"
-                                        :key="option.value"
-                                        :value="option.value"
-                                    >
-                                        {{ option.label }}
-                                    </option>
-                                </select>
+                                    Apply
+                                </Button>
+                                <Button
+                                    @click="clearFilters"
+                                    variant="outline"
+                                    size="icon"
+                                >
+                                    <X class="h-4 w-4" />
+                                </Button>
                             </div>
                         </div>
-                        <div class="flex gap-2">
-                            <button
-                                @click="applyFilters"
-                                class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
-                            >
-                                Apply Filters
-                            </button>
-                            <button
-                                @click="clearFilters"
-                                class="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-300"
-                            >
-                                Clear
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                    </CardContent>
+                </Card>
 
                 <div v-if="products.length === 0" class="py-16 text-center">
-                    <svg
-                        class="mx-auto h-12 w-12 text-gray-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                    <div
+                        class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-muted"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-                        />
-                    </svg>
-                    <h3 class="mt-4 text-lg font-medium text-gray-900">
+                        <Package class="h-10 w-10 text-muted-foreground" />
+                    </div>
+                    <h3 class="mb-2 text-lg font-semibold text-foreground">
                         No products found
                     </h3>
-                    <p class="mt-2 text-gray-500">
+                    <p class="mb-6 text-muted-foreground">
                         Try adjusting your filters or search criteria.
                     </p>
+                    <Button variant="outline" @click="clearFilters">
+                        Clear Filters
+                    </Button>
                 </div>
 
-                <div v-else class="mb-4 text-sm text-gray-600">
+                <div
+                    v-if="products.length > 0"
+                    class="mb-4 text-sm text-muted-foreground"
+                >
                     Showing {{ products.length }} product(s)
                 </div>
 
@@ -264,79 +277,69 @@ const getTypeColor = (type: string) => {
                     v-if="products.length > 0"
                     class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                 >
-                    <div
+                    <Card
                         v-for="product in products"
                         :key="product.id"
-                        class="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                        class="group overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                     >
                         <div
-                            class="aspect-square w-full overflow-hidden bg-gray-200"
+                            class="relative aspect-square overflow-hidden bg-muted"
                         >
                             <img
                                 v-if="product.image"
                                 :src="`/storage/${product.image}`"
                                 :alt="product.name"
-                                class="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                             />
                             <div
                                 v-else
-                                class="flex h-full w-full items-center justify-center bg-gray-100"
+                                class="flex h-full w-full items-center justify-center"
                             >
-                                <svg
-                                    class="h-16 w-16 text-gray-300"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                    />
-                                </svg>
+                                <Package
+                                    class="h-16 w-16 text-muted-foreground"
+                                />
                             </div>
                             <div
                                 v-if="product.status"
                                 class="absolute top-3 right-3"
                             >
-                                <span
-                                    :class="
+                                <Badge
+                                    :variant="
                                         product.status === 'Available'
-                                            ? 'bg-green-500'
-                                            : 'bg-gray-500'
+                                            ? 'default'
+                                            : 'secondary'
                                     "
-                                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-white"
                                 >
                                     {{ product.status }}
-                                </span>
+                                </Badge>
                             </div>
                         </div>
-                        <div class="p-4">
-                            <div class="mb-2">
-                                <span
-                                    :class="getTypeColor(product.type)"
-                                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                                >
-                                    {{ product.type }}
-                                </span>
+                        <CardHeader class="p-4 pb-0">
+                            <div class="mb-2 flex items-center justify-between">
+                                <Badge variant="outline">{{
+                                    product.type
+                                }}</Badge>
                             </div>
-                            <h3
-                                class="text-lg font-semibold text-gray-900 transition-colors group-hover:text-indigo-600"
+                            <CardTitle
+                                class="line-clamp-2 text-lg font-semibold"
+                                >{{ product.name }}</CardTitle
                             >
-                                {{ product.name }}
-                            </h3>
-                            <p class="mt-2 text-xl font-bold text-indigo-600">
+                        </CardHeader>
+                        <CardContent class="p-4 pt-0">
+                            <p class="text-2xl font-bold text-primary">
                                 {{ formatPrice(product.price) }}
                             </p>
-                            <button
+                        </CardContent>
+                        <CardFooter class="p-4 pt-0">
+                            <Button
                                 @click="addToCart(product.id)"
-                                class="mt-4 w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                class="w-full gap-2"
                             >
+                                <ShoppingCart class="h-4 w-4" />
                                 Add to Cart
-                            </button>
-                        </div>
-                    </div>
+                            </Button>
+                        </CardFooter>
+                    </Card>
                 </div>
             </div>
         </div>

@@ -1,10 +1,10 @@
 import { createInertiaApp } from '@inertiajs/vue3';
+import { InertiaToast } from '@laravel-inertia-toast/vue';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import '../css/app.css';
 import { initializeTheme } from '@/composables/useAppearance';
-
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
@@ -17,6 +17,11 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(InertiaToast, {
+                duration: 5000,
+                position: 'top-right',
+                maxVisible: 5,
+            })
             .mount(el);
     },
     progress: {

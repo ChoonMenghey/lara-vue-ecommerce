@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { Toaster } from 'vue-sonner';
+import { Toasts } from '@laravel-inertia-toast/vue';
 import AppContent from '@/components/AppContent.vue';
-
 import AppShell from '@/components/AppShell.vue';
 import AppHeader from '@/components/user/UserHeader.vue';
 import type { BreadcrumbItem } from '@/types';
@@ -22,6 +21,7 @@ withDefaults(defineProps<Props>(), {
         <AppHeader :breadcrumbs="breadcrumbs" :cart-count="cartCount" />
         <AppContent variant="header">
             <slot />
+            <Toasts />
         </AppContent>
     </AppShell>
 </template>

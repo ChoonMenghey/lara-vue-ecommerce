@@ -6,6 +6,10 @@ import { usePage } from '@inertiajs/vue3';
 import UserLayout from '@/layouts/UserLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 import { home } from '@/routes';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Badge from '@/components/ui/badge/Badge.vue';
+import Button from '@/components/ui/button/Button.vue';
+import { Package, Calendar, ArrowRight, ShoppingBag } from 'lucide-vue-next';
 
 interface OrderItem {
     id: number;
@@ -25,6 +29,7 @@ interface Order {
     id: number;
     user_id: number;
     total_price: number;
+    order_status: string;
     created_at: string;
     order_items: OrderItem[];
 }
@@ -40,6 +45,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const page = usePage();
 const flash = computed(() => page.props.flash as { success?: string | null });
+
+const ordersWithDisplayId = computed(() => {
+    return props.orders.map((order, index) => ({
+        ...order,
+        displayId: index + 1,
+    }));
+});
 
 watch(
     () => flash.value.success,
@@ -93,150 +105,150 @@ const formatDate = (dateString: string) => {
         >
             <div class="mx-auto w-4/5 px-4 py-8 sm:px-6 lg:px-8">
                 <div class="mb-6 flex items-center justify-between">
-                    <h2 class="text-2xl font-bold tracking-tight text-gray-900">
+                    <h2
+                        class="text-2xl font-bold tracking-tight text-foreground"
+                    >
                         Order History
                     </h2>
-                    <Link
-                        :href="home()"
-                        class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
-                    >
-                        Continue Shopping
-                    </Link>
+                    <Button variant="outline" as-child>
+                        <Link :href="home()" class="gap-2">
+                            Continue Shopping
+                            <ArrowRight class="h-4 w-4" />
+                        </Link>
+                    </Button>
                 </div>
 
                 <div v-if="orders.length === 0" class="py-16 text-center">
-                    <svg
-                        class="mx-auto h-12 w-12 text-gray-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                    <div
+                        class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-muted"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                        />
-                    </svg>
-                    <h3 class="mt-4 text-lg font-medium text-gray-900">
+                        <ShoppingBag class="h-10 w-10 text-muted-foreground" />
+                    </div>
+                    <h3 class="mb-2 text-lg font-semibold text-foreground">
                         No orders yet
                     </h3>
-                    <p class="mt-2 text-gray-500">
+                    <p class="mb-6 text-muted-foreground">
                         You haven't placed any orders yet.
                     </p>
-                    <Link
-                        :href=home()
-                        class="mt-6 inline-block rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-500"
-                    >
-                        Start Shopping
-                    </Link>
+                    <Button as-child>
+                        <Link :href="home()">Start Shopping</Link>
+                    </Button>
                 </div>
 
                 <div v-else class="space-y-6">
-                    <div
-                        v-for="order in orders"
-                        :key="order.id"
-                        class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
-                    >
-                        <div
-                            class="border-b border-gray-200 bg-gray-50 px-6 py-4"
-                        >
+                    <Card v-for="order in ordersWithDisplayId" :key="order.id">
+                        <CardHeader class="pb-4">
                             <div class="flex items-center justify-between">
-                                <div>
-                                    <p
-                                        class="text-sm font-medium text-gray-500"
-                                    >
-                                        Order ID
-                                    </p>
-                                    <p
-                                        class="text-lg font-semibold text-gray-900"
-                                    >
-                                        #{{ order.id }}
-                                    </p>
+                                <div class="flex items-center gap-4">
+                                    <div>
+                                        <p
+                                            class="text-sm text-muted-foreground"
+                                        >
+                                            Order ID
+                                        </p>
+                                        <CardTitle class="text-lg"
+                                            >#{{ order.displayId }}</CardTitle
+                                        >
+                                    </div>
                                 </div>
-                                <div class="text-right">
-                                    <p
-                                        class="text-sm font-medium text-gray-500"
-                                    >
-                                        Date
-                                    </p>
-                                    <p class="text-sm text-gray-900">
-                                        {{ formatDate(order.created_at) }}
-                                    </p>
-                                </div>
-                                <div class="text-right">
-                                    <p
-                                        class="text-sm font-medium text-gray-500"
-                                    >
-                                        Total
-                                    </p>
-                                    <p
-                                        class="text-lg font-bold text-indigo-600"
-                                    >
-                                        {{ formatPrice(order.total_price) }}
-                                    </p>
+                                <div class="flex items-center gap-6">
+                                    <div class="text-right">
+                                        <p
+                                            class="flex items-center gap-1 text-sm text-muted-foreground"
+                                        >
+                                            <Calendar class="h-3 w-3" />
+                                            Date
+                                        </p>
+                                        <p class="text-sm font-medium">
+                                            {{ formatDate(order.created_at) }}
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p
+                                            class="text-sm text-muted-foreground"
+                                        >
+                                            Total
+                                        </p>
+                                        <p
+                                            class="text-xl font-bold text-primary"
+                                        >
+                                            {{ formatPrice(order.total_price) }}
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p
+                                            class="text-sm text-muted-foreground"
+                                        >
+                                            Status
+                                        </p>
+                                        <Badge
+                                            :variant="
+                                                order.order_status === 'Success'
+                                                    ? 'default'
+                                                    : 'secondary'
+                                            "
+                                            class="mt-1"
+                                        >
+                                            {{ order.order_status }}
+                                        </Badge>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="p-6">
-                            <h4 class="mb-4 text-sm font-medium text-gray-700">
+                        </CardHeader>
+                        <CardContent>
+                            <p
+                                class="mb-3 text-sm font-medium text-muted-foreground"
+                            >
                                 Items
-                            </h4>
-                            <div class="space-y-4">
+                            </p>
+                            <div class="space-y-3">
                                 <div
                                     v-for="item in order.order_items"
                                     :key="item.id"
-                                    class="flex items-center gap-4 border-b border-gray-100 pb-4 last:border-0 last:pb-0"
+                                    class="flex items-center gap-4 rounded-lg border p-3"
                                 >
                                     <div
-                                        class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
+                                        class="h-14 w-14 flex-shrink-0 overflow-hidden rounded-md bg-muted"
                                     >
                                         <img
                                             v-if="item.product.image"
                                             :src="`/storage/${item.product.image}`"
                                             :alt="item.product.name"
-                                            class="h-full w-full object-cover object-center"
+                                            class="h-full w-full object-cover"
                                         />
                                         <div
                                             v-else
-                                            class="flex h-full w-full items-center justify-center bg-gray-100"
+                                            class="flex h-full w-full items-center justify-center"
                                         >
-                                            <svg
-                                                class="h-8 w-8 text-gray-300"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                                />
-                                            </svg>
+                                            <Package
+                                                class="h-6 w-6 text-muted-foreground"
+                                            />
                                         </div>
                                     </div>
                                     <div class="flex-1">
-                                        <p class="font-medium text-gray-900">
+                                        <p class="font-medium">
                                             {{ item.product.name }}
                                         </p>
-                                        <p class="text-sm text-gray-500">
-                                            {{ item.product.type }}
-                                        </p>
+                                        <Badge
+                                            variant="outline"
+                                            class="mt-1 text-xs"
+                                            >{{ item.product.type }}</Badge
+                                        >
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-sm text-gray-500">
+                                        <p
+                                            class="text-sm text-muted-foreground"
+                                        >
                                             Qty: {{ item.quantity }}
                                         </p>
-                                        <p class="font-medium text-gray-900">
+                                        <p class="font-medium">
                                             {{ formatPrice(item.unit_price) }}
                                         </p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </div>
