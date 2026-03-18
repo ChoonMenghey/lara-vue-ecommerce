@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 use Illuminate\Support\Facades\Auth;
+use InertiaToast\Facades\Toast;
 
 class CartController extends Controller
 {
@@ -46,9 +47,11 @@ class CartController extends Controller
                 ]);
             }
 
-            return back()->with('success', 'Product added to cart');
+            Toast::success('Product added to cart');
+            return back();
         }
     }
+
     public function update(Request $request, CartItem $cartItem)
     {
         $quantity = $request->input('quantity');
@@ -56,14 +59,14 @@ class CartController extends Controller
         if ($quantity && $quantity > 0) {
             $cartItem->update(['quantity' => $quantity]);
         }
-        
+        Toast::success('Product updated to cart successfully');
         return back();
     }
     
     public function delete(Request $request, CartItem $cartItem)
     {
         $cartItem->delete();
-        
+        Toast::success('Product is removed from cart successfully');
         return back();
     }
 }

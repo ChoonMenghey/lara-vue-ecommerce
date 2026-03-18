@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\User\CartController;
@@ -47,6 +48,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
         Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+        // Orders route (Admin)
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.view');
+        Route::put('/orders/{order}', [AdminOrderController::class, 'update'])->name('orders.update');
     });
 });
 

@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid, ScanBarcode, Coins } from 'lucide-vue-next';
+import { LayoutGrid, ScanBarcode, Cuboid } from 'lucide-vue-next';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
-import NavUser from '@/components/NavUser.vue';
 import {
     Sidebar,
     SidebarContent,
@@ -14,8 +13,11 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes/admin';
+
+import { view } from '@/routes/admin/orders';
 import { index } from '@/routes/admin/products';
 import type { NavItem } from '@/types';
+import NavAdmin from './NavAdmin.vue';
 
 
 const mainNavItems: NavItem[] = [
@@ -30,10 +32,10 @@ const mainNavItems: NavItem[] = [
         icon: ScanBarcode,
     },
     {
-        title: 'Sales',
-        href: dashboard(),
-        icon: Coins,
-    },
+        title: 'Orders',
+        href: view(),
+        icon: Cuboid,
+    }
 ];
 
 </script>
@@ -57,8 +59,7 @@ const mainNavItems: NavItem[] = [
         </SidebarContent>
 
         <SidebarFooter>
-            
-            <NavUser />
+            <NavAdmin />
         </SidebarFooter>
     </Sidebar>
     <slot />

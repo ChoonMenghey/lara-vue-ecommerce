@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use InertiaToast\Facades\Toast;
 
 class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        return Inertia::render("admin/auth/login");
+        return Inertia::render("admin/auth/Login");
     }
 
     public function login(Request $request)
@@ -21,7 +22,8 @@ class AuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->route('admin.login')->with('error', 'Invalid credentials');
+        Toast::error('Invalid credentials');
+        return redirect()->route('admin.login');
     }
 
     public function logout(Request $request)

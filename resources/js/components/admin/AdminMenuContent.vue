@@ -8,16 +8,12 @@ import {
     DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import UserInfo from '@/components/UserInfo.vue';
-import { logout } from '@/routes';
+import { logout } from '@/routes/admin';
 import { edit } from '@/routes/profile';
 import type { User } from '@/types';
 
 type Props = {
     user: User;
-};
-
-const handleLogout = () => {
-    router.flushAll();
 };
 
 defineProps<Props>();
@@ -32,23 +28,24 @@ defineProps<Props>();
     <DropdownMenuSeparator />
     <DropdownMenuGroup>
         <DropdownMenuItem :as-child="true">
-            <Link class="block w-full cursor-pointer" :href="edit()" prefetch>
+            <Link
+                class="flex w-full cursor-pointer items-center text-sm outline-none hover:bg-gray-100 hover:text-gray-900"
+                :href="edit()"
+            >
                 <Settings class="mr-2 h-4 w-4" />
                 Settings
-            </Link>
+        </Link>
         </DropdownMenuItem>
     </DropdownMenuGroup>
     <DropdownMenuSeparator />
     <DropdownMenuItem :as-child="true">
-        <Link
-            class="block w-full cursor-pointer"
-            :href="logout()"
-            @click="handleLogout"
-            as="button"
+        <button
+            class="flex w-full cursor-pointer items-center text-sm outline-none hover:bg-gray-100 hover:text-gray-900"
+            @click="router.post(logout().url)"
             data-test="logout-button"
         >
             <LogOut class="mr-2 h-4 w-4" />
             Log out
-        </Link>
+        </button>
     </DropdownMenuItem>
 </template>

@@ -36,11 +36,10 @@ import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl } from '@/lib/utils';
-import { products } from '@/routes';
-import { index } from '@/routes/admin/products';
+import { home, products } from '@/routes';
 import { view } from '@/routes/cart';
-import type { BreadcrumbItem, NavItem } from '@/types';
 import { history } from '@/routes/order';
+import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -112,7 +111,7 @@ const mainNavItems: NavItem[] = [
                     </Sheet>
                 </div>
 
-                <Link :href="index()" class="flex items-center gap-x-2">
+                <Link :href="home()" class="flex items-center gap-x-2">
                     <AppLogo />
                 </Link>
 

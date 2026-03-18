@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use InertiaToast\Facades\Toast;
 
 class OrderController extends Controller
 {
@@ -64,6 +65,7 @@ class OrderController extends Controller
         $order = Order::create([
             'user_id' => $user->id,
             'total_price' => $totalPrice,
+            'order_status' => 'Pending',
         ]);
 
         foreach ($cartItems as $cartItem) {
@@ -77,6 +79,7 @@ class OrderController extends Controller
 
         CartItem::where('user_id', $user->id)->delete();
 
-        return redirect()->route('home')->with('success', 'Order placed successfully!');
+        Toast::success('Order placed successfully!');
+        return redirect()->route('home');
     }
 }

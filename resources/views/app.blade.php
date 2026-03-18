@@ -17,6 +17,7 @@
                     }
                 }
             })();
+            import { Toasts } from '@laravel-inertia-toast/vue'
         </script>
 
         {{-- Inline style to set the HTML background color based on our theme in app.css --}}
@@ -43,6 +44,7 @@
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
+        <Toasts />
         @inertia
     </body>
 </html>

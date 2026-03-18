@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Toasts } from '@laravel-inertia-toast/vue';
 import AppSidebar from '@/components/admin/AdminSidebar.vue';
 import AppSidebarHeader from '@/components/admin/AdminSidebarHeader.vue';
 import AppContent from '@/components/AppContent.vue';
@@ -21,6 +22,7 @@ withDefaults(defineProps<Props>(), {
         <AppContent variant="sidebar" class="overflow-x-hidden">
             <AppSidebarHeader :breadcrumbs="breadcrumbs" />
             <slot />
+            <Toasts />
         </AppContent>
     </AppShell>
 </template>
